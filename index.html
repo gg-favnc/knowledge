@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAV_NONCHALANT | Cosmic Knowledge</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+      color: #d0a0ff;
+      background: #000;
+      user-select: none;
+    }
+    #scene-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+    #ui-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+    #music-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      pointer-events: all;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    #volume-btn {
+      background: rgba(0,0,0,0.7);
+      border: 2px solid #b56bff;
+      color: #b56bff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.3s;
+    }
+    #volume-btn:hover {
+      background: rgba(181, 107, 255, 0.2);
+    }
+    #creator-panel {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.7);
+      border: 2px solid #b56bff;
+      border-radius: 10px;
+      padding: 15px;
+      max-width: 300px;
+      display: none;
+      z-index: 50;
+      pointer-events: none;
+      backdrop-filter: blur(5px);
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    #game-panel {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.8);
+      border: 2px solid #b56bff;
+      border-radius: 10px;
+      padding: 20px;
+      width: 300px;
+      display: none;
+      z-index: 200;
+      pointer-events: all;
+      text-align: center;
+    }
+    #game-title {
+      color: #d0a0ff;
+      margin-top: 0;
+    }
+    #game-canvas {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #b56bff;
+      margin: 10px 0;
+    }
+    .glow {
+      text-shadow: 0 0 10px rgba(181, 107, 255, 0.7);
+    }
+    .neon-pulse {
+      animation: pulse 2s infinite alternate;
+    }
+    @keyframes pulse {
+      from { opacity: 0.7; }
+      to { opacity: 1; }
+    }
+    #on-screen-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 100;
+      pointer-events: all;
+      display: none;
+      grid-template-columns: repeat(3, 50px);
+      gap: 5px;
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #b56bff;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    #on-screen-controls button {
+      background: rgba(181, 107, 255, 0.3);
+      border: 1px solid #b56bff;
+      color: #d0a0ff;
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    #on-screen-controls button:active {
+      background: rgba(181, 107, 255, 0.6);
+    }
+    #debug-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      border: 2px solid #b56bff;
+      border-radius: 10px;
+      padding: 10px 15px;
+      color: #00ffaa;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      z-index: 50;
+      pointer-events: none;
+      backdrop-filter: blur(5px);
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    #info-screen-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(0,0,0,0.7);
+        border: 2px solid #b56bff;
+        color: #b56bff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-size: 20px;
+        z-index: 10;
+        pointer-events: all;
+        transition: all 0.3s;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+    #info-screen-btn:hover {
+        background: rgba(181, 107, 255, 0.2);
+    }
+    #settings-panel {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.9);
+        border: 2px solid #00ffaa;
+        border-radius: 10px;
+        padding: 20px;
+        width: 300px;
+        display: none;
+        z-index: 300;
+        pointer-events: all;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+    #settings-panel h2 {
+        color: #00ffaa;
+        margin-top: 0;
+    }
+    #settings-panel label {
+        display: block;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+    #settings-panel input[type="range"] {
+        width: 80%;
+        -webkit-appearance: none;
+        height: 8px;
+        background: #b56bff;
+        border-radius: 5px;
+        outline: none;
+        opacity: 0.7;
+        transition: opacity .2s;
+    }
+    #settings-panel input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #00ffaa;
+        cursor: pointer;
+    }
+    #settings-panel input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #00ffaa;
+        cursor: pointer;
+    }
+    #settings-panel #sensitivity-value {
+        color: #00ffaa;
+        font-weight: bold;
+    }
+    #game-over-message {
+      color: #ff0000;
+      font-size: 1.5em;
+      margin-top: 10px;
+      display: none;
+    }
+    #game-restart-btn {
+      background: #00ffaa;
+      border: 2px solid #00aa77;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+      display: none;
+    }
+    #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #000;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Courier New', monospace;
+        color: #00ffaa;
+        font-size: 1.2em;
+        overflow: hidden;
+        transition: opacity 1s ease-out;
+    }
+    #terminal-output {
+        white-space: pre-wrap;
+        max-height: 80%;
+        overflow-y: auto;
+        padding: 20px;
+        border: 1px solid #00ffaa;
+        box-shadow: 0 0 15px rgba(0, 255, 170, 0.5);
+        background: rgba(0,0,0,0.8);
+        width: 80%;
+        max-width: 600px;
+    }
+    .terminal-line {
+        margin-bottom: 5px;
+    }
+    .terminal-prompt {
+        color: #b56bff;
+    }
+    .terminal-success {
+        color: #00ffaa;
+    }
+    .terminal-error {
+        color: #ff0000;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="scene-container"></div>
+  
+  <div id="ui-container">
+    <div id="creator-panel">
+      <h2>COSMIC NOTES</h2>
+      <p id="creator-text">This universe was forged from stardust by Fav_Nonchalant. Every nebula, star, and planet was carefully crafted...</p>
+    </div>
+    
+    <div id="game-panel">
+      <h2 id="game-title">CODE COLLECTOR</h2>
+      <canvas id="game-canvas" width="260" height="200"></canvas>
+      <p id="game-score">Score: 0</p>
+      <p id="game-over-message" class="glow">GAME OVER!</p>
+      <button id="game-restart-btn">RESTART</button>
+      <button id="close-game">CLOSE</button>
+    </div>
+    
+    <div id="music-controls">
+      <div id="volume-btn">♪</div>
+      <iframe id="music-player" width="0" height="0" src="https://www.youtube.com/embed/ZGSl0qBifII?autoplay=1&enablejsapi=1" frameborder="0" allow="autoplay"></iframe>
+    </div>
+
+    <div id="on-screen-controls"></div>
+
+    <div id="debug-panel">
+      <p>FPS: <span id="debug-fps">0</span></p>
+      <p>Pos: <span id="debug-pos">0,0,0</span></p>
+    </div>
+
+    <div id="info-screen-btn">ⓘ</div>
+
+    <div id="settings-panel">
+        <h2>SETTINGS</h2>
+        <label for="sensitivity-slider">Movement Sensitivity: <span id="sensitivity-value">1.00</span></label>
+        <input type="range" id="sensitivity-slider" min="0.1" max="2.0" value="1.0" step="0.01">
+        <button id="close-settings" onclick="toggleInfoScreen()">CLOSE</button>
+    </div>
+  </div>
+
+  <div id="loading-screen">
+      <div id="terminal-output">
+          <div class="terminal-line terminal-prompt">_</div>
+      </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+  <script src="https://gg-favnc.github.io/3dstyle/base.js"></script>
+</body>
+</html>
