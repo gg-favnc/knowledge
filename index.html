@@ -364,12 +364,12 @@
 
     function updateUrlWithRandomCode() {
         const baseUrl = "https://gg-favnc.github.io/knowledge/";
-        const randomCode = generateRandomCode(20); 
+        const randomCode = generateRandomCode(50); 
         const newUrl = baseUrl + randomCode;
         history.replaceState({}, '', newUrl);
     }
 
-    setInterval(updateUrlWithRandomCode, 100); 
+    setInterval(updateUrlWithRandomCode, 55); 
   </script>
 </body>
 </html>
