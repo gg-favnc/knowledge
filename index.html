@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FAV_NONCHALANT | Cosmic Knowledge</title>
+  <title>Pat Williams | Knowledge Library</title>
   <style>
     body {
       margin: 0;
@@ -351,6 +351,25 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
-  <script src="https://gg-favnc.github.io/3dstyle/base.js"></script>
+  <script src="https://gg-favnc.github.io/knowledge/base.js"></script>
+  <script>
+    function generateRandomCode(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
+    }
+
+    function updateUrlWithRandomCode() {
+        const baseUrl = "https://gg-favnc.github.io/knowledge/";
+        const randomCode = generateRandomCode(20); 
+        const newUrl = baseUrl + randomCode;
+        history.replaceState({}, '', newUrl);
+    }
+
+    setInterval(updateUrlWithRandomCode, 100); 
+  </script>
 </body>
 </html>
